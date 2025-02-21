@@ -35,7 +35,7 @@ def findFlights(folder_path, img_names, geonp_path, transformer):
             if FirstLine:
                 pendiente = (latc - lastCords[0]) / (lonc - lastCords[1])
                 FirstLine = False
-                umb = pendiente * 0.05
+                umb = pendiente * 0.01
             else: 
                 pendiente = (latc - lastCords[0]) / (lonc - lastCords[1])
                 if -umb < pendiente < umb:
