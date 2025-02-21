@@ -287,18 +287,18 @@ def findFlights(path_root,folder_path, img_names, geonp_path, transformer):
     vueloList = []
     idxVuelo = 0
     # Calcular los cambios de dirección
-    vueloList.append([folder_path[0]])
+    vueloList.append([img_names[0]])
     
-    for i in range(1, len(listCords)-1):
+    for i in range(1, len(img_names)):
         dy = latitudes[i] - latitudes[i-1]
         dx = longitudes[i] - longitudes[i-1]
         angle = abs(np.arctan2(dy, dx) * (180 / np.pi))  # Convertir a grados
         
         if 100 > angle > 70:
-            vueloList[idxVuelo].append(folder_path[i])
+            vueloList[idxVuelo].append(img_names[i])
         else:
             idxVuelo += 1
-            vueloList.append([folder_path[i]])
+            vueloList.append([img_names[i]])
                     
     print("Numero de vuelos: ", len(vueloList))
     for vuelo in vueloList:
