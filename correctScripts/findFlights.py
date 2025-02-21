@@ -310,5 +310,8 @@ def findFlights(path_root,folder_path, img_names, geonp_path, transformer):
     print("Numero de vuelos: ", len(newVuelos))
     for vuelo in newVuelos:
         print(f"Vuelo {newVuelos.index(vuelo)}: {len(vuelo)} imagenes")
+        
+    for vuelo in newVuelos:
+        saveKMLFlights(vuelo, path_root, f"Vuelo_{newVuelos.index(vuelo)}")
 
         
