@@ -284,18 +284,23 @@ def findFlights(path_root,folder_path, img_names, geonp_path, transformer):
         
         if lastCords[0] != None:            
             if FirstLine:
+                print(f"Primera Vuelo: V{idxVuelo}")
                 pendiente = (latc - lastCords[0]) / (lonc - lastCords[1])
+                print(f"Pendiente: {pendiente}")
                 FirstLine = False
                 umb = pendiente * 0.1
             else: 
                 pendiente = (latc - lastCords[0]) / (lonc - lastCords[1])
+                print(f"Pendiente: {pendiente}")
                 if  -umb <= pendiente <= umb:
                     vueloList[idxVuelo].append(image_path)
                 else:
+                    print(f"Nuevo vuelo: V{idxVuelo}")
                     idxVuelo += 1
                     vueloList.append([image_path])
             
-         
+            lastCords[0] = latc
+            lastCords[1] = lonc
             
             
         else:
@@ -309,8 +314,8 @@ def findFlights(path_root,folder_path, img_names, geonp_path, transformer):
     print(f"Generando KML de los vuelos")
     
         
-    for e, vuelo in enumerate(vueloList):
-        saveKMLFlights(vuelo, path_root, f'Vuelo_{e}')
+    # for e, vuelo in enumerate(vueloList):
+    #     saveKMLFlights(vuelo, path_root, f'Vuelo_{e}')
         
     for e, vuelo in enumerate(vueloList):
         print(f"Vuelo {e}: {len(vuelo)} Imagenes")
