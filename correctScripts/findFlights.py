@@ -17,7 +17,7 @@ def findFlights(folder_path, img_names, geonp_path, transformer):
     vueloList = []
     lastCords = [None, None]
     idxVuelo = 0
-    latOrder = None
+    FirstLine = True
     umb = None
     for image_path in tqdm(img_names, desc="Calculando lineas"):
         img = cv2.imread(folder_path + "/" + image_path)
@@ -32,40 +32,18 @@ def findFlights(folder_path, img_names, geonp_path, transformer):
         lonc, latc = transformer.transform(xc_utm, yc_utm)
         
         if lastCords[0] != None:            
-            if latOrder == None:
-                latdiff = latc - lastCords[0]
-                londiff = lonc - lastCords[1]
-                print(f"latdiff: {latdiff}")
-                print(f"londiff: {londiff}")
-                
-                if latdiff < londiff:
-                    latOrder = True
-                    umb = latdiff * 0.1
-                    
-                else:
-                    latOrder = False
-                    umb = londiff * 0.1
-                    
-            elif latOrder:
-                latdiff = latc - lastCords[0]
-                if -umb < latdiff < umb:
-                    vueloList[idxVuelo].append(image_path)
-                    
-                else:
-                    idxVuelo += 1
-                    vueloList.append([image_path])
-            else:
-                latdiff = latc - lastCords[0]
-                if -umb < latdiff < umb:
+            if FirstLine:
+                pendiente = (latc - lastCords[0]) / (lonc - lastCords[1])
+                FirstLine = False
+                umb = pendiente * 0.05
+            else: 
+                pendiente = (latc - lastCords[0]) / (lonc - lastCords[1])
+                if -umb < pendiente < umb:
                     vueloList[idxVuelo].append(image_path)
                 else:
                     idxVuelo += 1
                     vueloList.append([image_path])
             
-            
-            lastCords[0] = latc
-            lastCords[1] = lonc
-                    
          
             
             
@@ -74,7 +52,7 @@ def findFlights(folder_path, img_names, geonp_path, transformer):
             lastCords[1] = lonc
             vueloList.append([image_path])
             
-    print(f"Numero de vuelos: {len(vueloList)}")
+    
     print(f"Vuelos: {vueloList}")
     return vueloList
     
