@@ -294,7 +294,7 @@ def findFlights(path_root,folder_path, img_names, geonp_path, transformer):
 
     # Identificar cambios significativos en la dirección
     angle_changes = [0]  # Primer punto no tiene cambio
-    threshold = 10  # Umbral en grados para considerar cambio de dirección
+    threshold = 20  # Umbral en grados para considerar cambio de dirección
     for i in range(1, len(angles)):
         delta_angle = abs(angles[i] - angles[i-1])
         if delta_angle > threshold:
@@ -316,10 +316,6 @@ def findFlights(path_root,folder_path, img_names, geonp_path, transformer):
             
     print(f"Vuelos: {segments}")
     print(f"Numero de vuelos: {len(segments)}")
-    # for e, vuelo in enumerate(vueloList):
-    #     saveKMLFlights(vuelo, path_root, f'Vuelo_{e}')
-        
-    for e, vuelo in enumerate(segments):
-        print(f"Vuelo {e}: {vuelo} Imagenes")
+
         
         
