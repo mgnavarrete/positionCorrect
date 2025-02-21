@@ -307,8 +307,13 @@ def findFlights(path_root,folder_path, img_names, geonp_path, transformer):
     print(f"Vuelos: {vueloList}")
     print(f"Numero de vuelos: {len(vueloList)}")
     print(f"Generando KML de los vuelos")
+    
+        
     for e, vuelo in enumerate(vueloList):
         saveKMLFlights(vuelo, path_root, f'Vuelo_{e}')
+        
+    for e, vuelo in enumerate(vueloList):
+        print(f"Vuelo {e}: {len(vuelo)} Imagenes")
     return vueloList
     
     
