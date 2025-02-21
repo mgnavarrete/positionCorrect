@@ -289,7 +289,7 @@ def findFlights(path_root,folder_path, img_names, geonp_path, transformer):
                 umb = pendiente * 0.1
             else: 
                 pendiente = (latc - lastCords[0]) / (lonc - lastCords[1])
-                if  pendiente < umb:
+                if  -umb <= pendiente <= umb:
                     vueloList[idxVuelo].append(image_path)
                 else:
                     idxVuelo += 1
