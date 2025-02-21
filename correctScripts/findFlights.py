@@ -291,7 +291,8 @@ def findFlights(path_root,folder_path, img_names, geonp_path, transformer):
         dx = longitudes[i] - longitudes[i-1]
         angle = np.arctan2(dy, dx) * (180 / np.pi)  # Convertir a grados
         angles.append(angle)
-
+        
+    print(angles)
     # Identificar cambios significativos en la dirección
     angle_changes = [0]  # Primer punto no tiene cambio
     threshold = 20  # Umbral en grados para considerar cambio de dirección
