@@ -266,12 +266,9 @@ def saveKMLFlights(path_imagenes, path_save, name):
 
 def findFlights(path_root,folder_path, img_names, geonp_path, transformer):
     vueloList = []
-    lastCords = [None, None]
+    listCords = []
     idxVuelo = 0
-    FirstLine = True
-    umb = None
-    str_pendiente = ""
-    str_latlon = ""
+    
     for image_path in tqdm(img_names, desc="Calculando lineas"):
         img = cv2.imread(folder_path + "/" + image_path)
         H, W, _ = img.shape
@@ -283,52 +280,46 @@ def findFlights(path_root,folder_path, img_names, geonp_path, transformer):
         geoImg = np.load(f"{geonp_path}/{image_path[:-4]}.npy")
         xc_utm, yc_utm = geoImg[yc][xc][0], geoImg[yc][xc][1]
         lonc, latc = transformer.transform(xc_utm, yc_utm)
-        str_latlon += f"{latc}, {lonc}\n"
-        
-        if lastCords[0] != None:            
-            if FirstLine:
-                print(f"Primera Vuelo: V{idxVuelo}")
-                pendiente = (latc - lastCords[0]) / (lonc - lastCords[1])
-                str_pendiente = f"{pendiente}\n"
-                FirstLine = False
-                umb = pendiente * 0.1
-            else: 
-                pendiente = (latc - lastCords[0]) / (lonc - lastCords[1])
-                str_pendiente += f"{pendiente}\n"
-                print(f"Pendiente: {pendiente}")
-                if  -umb <= pendiente <= umb:
-                    vueloList[idxVuelo].append(image_path)
-                else:
-                    print(f"Nuevo vuelo: V{idxVuelo}")
-                    idxVuelo += 1
-                    vueloList.append([image_path])
-            
-            lastCords[0] = latc
-            lastCords[1] = lonc
-            
-            
-        else:
-            lastCords[0] = latc
-            lastCords[1] = lonc
-            vueloList.append([image_path])
-            
+        listCords.append((latc, lonc))
     
-    print(f"Vuelos: {vueloList}")
-    print(f"Numero de vuelos: {len(vueloList)}")
-    print(f"Generando KML de los vuelos")
-    with open(f"{path_root}/pendientes.txt", "w") as file:
-        file.write(str_pendiente)
-    with open(f"{path_root}/latlon.txt", "w") as file:
-        file.write(str_latlon)
-        
+    latitudes, longitudes = zip(*listCords)
 
+    # Calcular los cambios de dirección
+    angles = []
+    for i in range(1, len(listCords)):
+        dy = latitudes[i] - latitudes[i-1]
+        dx = longitudes[i] - longitudes[i-1]
+        angle = np.arctan2(dy, dx) * (180 / np.pi)  # Convertir a grados
+        angles.append(angle)
+
+    # Identificar cambios significativos en la dirección
+    angle_changes = [0]  # Primer punto no tiene cambio
+    threshold = 10  # Umbral en grados para considerar cambio de dirección
+    for i in range(1, len(angles)):
+        delta_angle = abs(angles[i] - angles[i-1])
+        if delta_angle > threshold:
+            angle_changes.append(1)  # Cambio de dirección
+        else:
+            angle_changes.append(0)  # Dirección constante
+
+    # Agrupar segmentos en base a los cambios de dirección
+    segment_id = 0
+    segments = []
+    for i in range(len(angle_changes)):
+        if i == 0 or angle_changes[i] == 1:
+            segment_id += 1
+        segments.append(segment_id)
+        
+        
+            
+            
+            
+    print(f"Vuelos: {segments}")
+    print(f"Numero de vuelos: {len(segments)}")
     # for e, vuelo in enumerate(vueloList):
     #     saveKMLFlights(vuelo, path_root, f'Vuelo_{e}')
         
-    for e, vuelo in enumerate(vueloList):
-        print(f"Vuelo {e}: {len(vuelo)} Imagenes")
-        
-        
-        
+    for e, vuelo in enumerate(segments):
+        print(f"Vuelo {e}: {vuelo} Imagenes")
         
         
