@@ -301,12 +301,14 @@ def findFlights(path_root,folder_path, img_names, geonp_path, transformer):
             vueloList.append([img_names[i]])
                     
     print("Numero de vuelos: ", len(vueloList))
-    for vuelo in vueloList:
-        if len(vuelo) < 2:
-            vueloList.remove(vuelo)
-    
-    print("Numero de vuelos: ", len(vueloList))
+    newVuelos = vueloList.copy()
     for vuelo in vueloList:
         print(f"Vuelo {vueloList.index(vuelo)}: {len(vuelo)} imagenes")
+        if len(vuelo) < 4:
+            newVuelos.remove(vuelo)
+    
+    print("Numero de vuelos: ", len(newVuelos))
+    for vuelo in newVuelos:
+        print(f"Vuelo {newVuelos.index(vuelo)}: {len(vuelo)} imagenes")
 
         
