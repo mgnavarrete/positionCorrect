@@ -1,4 +1,17 @@
-from functions import *
+from ultralytics import YOLO
+import cv2
+import numpy as np
+from tqdm import tqdm
+
+
+def haversine_distance(lat1, lon1, lat2, lon2):
+    R = 6371  # Radio de la Tierra en kilómetros
+    dLat = np.radians(lat2 - lat1)
+    dLon = np.radians(lon2 - lon1)
+    a = np.sin(dLat/2) * np.sin(dLat/2) + np.cos(np.radians(lat1)) * np.cos(np.radians(lat2)) * np.sin(dLon/2) * np.sin(dLon/2)
+    c = 2 * np.arctan2(np.sqrt(a), np.sqrt(1-a))
+    distance = R * c
+    return distance 
 
 def findFlights(folder_path, img_names, geonp_path, transformer):
     vueloList = []
