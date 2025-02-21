@@ -171,16 +171,6 @@ def save_georef_matriz(data, desp_este=0, desp_norte=0, desp_yaw=0, offset_altur
          Matriz_zonas_2[..., np.newaxis]], axis=-1)
     return matriz_puntos_utm
 
-# Función para seleccionar múltiples directorios
-def select_directories():
-    
-    path_root = filedialog.askdirectory(title='Seleccione el directorio raíz')
-    while path_root:
-        list_folders.append(path_root)
-        path_root = filedialog.askdirectory(title='Seleccione otro directorio o cancele para continuar')
-    if not list_folders:
-        raise Exception("No se seleccionó ningún directorio")
-    
 def saveGeoM(img_names, metadata_path, geonp_path, folder_path):
     for image_path in tqdm(img_names, desc="Generando Matrices Georeferenciadas de las imágenes"):
         # Carga la metadata de la imagen
@@ -203,11 +193,11 @@ def haversine_distance(lat1, lon1, lat2, lon2):
 
 
 def saveKMLFlights(path_imagenes, path_save, name):
-    with open(path_save + '/' + path_save.split('/')[-1] + f'_{name}.kml', 'w') as file:
+    with open(path_save + f'/{name}.kml', 'w') as file:
             a = f'''<?xml version="1.0" encoding="UTF-8"?>
         <kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
         <Folder>
-            <name>{path_save.split('/')[-1]}_PA</name>
+            <name>{path_save.split('/')[-1]}_{name}</name>
             '''
             file.write(a)
             vuelo_ant = ''
@@ -271,10 +261,10 @@ def saveKMLFlights(path_imagenes, path_save, name):
         </kml>'''
             file.write(a)
 
-    print(f"KML generado para la carpeta {path_save + '/' + path_save.split('/')[-1] + '.kml'}")
+    print(f"KML generado para la carpeta {path_save + '/' + path_save.split('/')[-1] + f'_{name}.kml'}")
 
 
-def findFlights(folder_path, img_names, geonp_path, transformer):
+def findFlights(path_root,folder_path, img_names, geonp_path, transformer):
     vueloList = []
     lastCords = [None, None]
     idxVuelo = 0
@@ -296,10 +286,10 @@ def findFlights(folder_path, img_names, geonp_path, transformer):
             if FirstLine:
                 pendiente = (latc - lastCords[0]) / (lonc - lastCords[1])
                 FirstLine = False
-                umb = pendiente * 0.01
+                umb = pendiente * 0.1
             else: 
                 pendiente = (latc - lastCords[0]) / (lonc - lastCords[1])
-                if -umb < pendiente < umb:
+                if  pendiente < umb:
                     vueloList[idxVuelo].append(image_path)
                 else:
                     idxVuelo += 1
@@ -318,7 +308,7 @@ def findFlights(folder_path, img_names, geonp_path, transformer):
     print(f"Numero de vuelos: {len(vueloList)}")
     print(f"Generando KML de los vuelos")
     for e, vuelo in enumerate(vueloList):
-        saveKMLFlights(vuelo, folder_path, f'V{e}')
+        saveKMLFlights(vuelo, path_root, f'Vuelo_{e}')
     return vueloList
     
     
