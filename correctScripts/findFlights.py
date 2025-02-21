@@ -270,6 +270,7 @@ def findFlights(path_root,folder_path, img_names, geonp_path, transformer):
     idxVuelo = 0
     FirstLine = True
     umb = None
+    str_pendiente = ""
     for image_path in tqdm(img_names, desc="Calculando lineas"):
         img = cv2.imread(folder_path + "/" + image_path)
         H, W, _ = img.shape
@@ -286,11 +287,12 @@ def findFlights(path_root,folder_path, img_names, geonp_path, transformer):
             if FirstLine:
                 print(f"Primera Vuelo: V{idxVuelo}")
                 pendiente = (latc - lastCords[0]) / (lonc - lastCords[1])
-                print(f"Pendiente: {pendiente}")
+                str_pendiente = f"{pendiente}\n"
                 FirstLine = False
                 umb = pendiente * 0.1
             else: 
                 pendiente = (latc - lastCords[0]) / (lonc - lastCords[1])
+                str_pendiente += f"{pendiente}\n"
                 print(f"Pendiente: {pendiente}")
                 if  -umb <= pendiente <= umb:
                     vueloList[idxVuelo].append(image_path)
@@ -312,7 +314,8 @@ def findFlights(path_root,folder_path, img_names, geonp_path, transformer):
     print(f"Vuelos: {vueloList}")
     print(f"Numero de vuelos: {len(vueloList)}")
     print(f"Generando KML de los vuelos")
-    
+    with open(f"{path_root}/pendientes.txt", "w") as file:
+        file.write(str_pendiente)
         
     # for e, vuelo in enumerate(vueloList):
     #     saveKMLFlights(vuelo, path_root, f'Vuelo_{e}')
