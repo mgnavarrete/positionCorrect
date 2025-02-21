@@ -5,7 +5,6 @@ from tqdm import tqdm
 import json
 import utm
 import string
-from saveGeoMatriz import *
 import numpy as np
 import utm
 import tkinter as tk
