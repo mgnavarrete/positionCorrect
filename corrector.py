@@ -1,8 +1,9 @@
-from correctScripts.correctH import correctH, correctHCDS, correctHLLK
+from correctScripts.correctH import correctH, correctHCDS, correctHLLK, correctHDHM
 from correctScripts.correctE import correctE, correctECDS, correctELLK2
 from correctScripts.correctYaw import correctYaw, correctYawCDS, correctYawLLK
 from correctScripts.correctN import correctNLLK
 from correctScripts.saveGeoMatriz import saveGeoM, saveKML
+from correctScripts.findFlights import findFlights
 from ultralytics import YOLO
 import os
 import cv2
@@ -90,6 +91,8 @@ if __name__ == '__main__':
     print("         4. Lalakama (LLK)")
     print("         5. Sol de Lila (SDL)")
     print("         6. Manzano (MNZ)")
+    print("         7. CM1")
+    print("         8. Don Humberto (DHM)")
     print("         x. Salir")
     planta = input("Seleccione una opción: ")
     if planta == '1':
@@ -123,7 +126,30 @@ if __name__ == '__main__':
         difUmb = 0.002
     
         csv_file_path = 'kmlTables\MNZ - Trackers.csv'
+
+
+    elif planta == '7':
+        areaUmb = 15000
+        difUmb = 0.002
+    
+        csv_file_path = 'kmlTables\CM1track.csv'
+
+    elif planta == '8':
+        areaUmb = 15000
+        difUmb = 0.002
         
+        print("Elije Poligono a ajustar:")
+        print("         1. P1 - CT1-2")
+        print("         2. P2 - CT3")
+        print("         3. P3 - CT4-5")
+        campo = input("Seleccione una opción: ")
+        if campo == '1':
+            csv_file_path = 'kmlTables\DHM - Trackers CT1-2.csv'
+        elif campo == '2':
+            csv_file_path = 'kmlTables\DHM - Trackers CT3.csv'
+        elif campo == '3':
+            csv_file_path = 'kmlTables\DHM - Trackers CT4-5.csv'
+
     else:
         exit()
 
@@ -262,4 +288,28 @@ if __name__ == '__main__':
             saveKML(img_names, path_root)
             deleteGeoNp(geonp_path)
             
+
+        elif planta == '7':
+            print("Ajustando Planta CM1...")
+            
+            resetMD(img_names, metadata_path, 'all')
+            saveGeoM(img_names, metadata_path, geonp_path, path_root)   
+            correctHLLK(folder_path, img_names, geonp_path, metadata_path, metadatanew_path, df, transformer, model, ancho, areaUmb, path_root)
+            correctYawLLK(folder_path, img_names, geonp_path, metadata_path, metadatanew_path, df, transformer, model, yawKML, ancho, list_images, areaUmb, difUmb)
+            # adjustMD(img_names, metadata_path, 'offset_E', 2)
+            # saveGeoM(img_names, metadata_path, geonp_path, path_root)   
+            # correctELLK2(folder_path, img_names, geonp_path, metadata_path, metadatanew_path, df, transformer, model)
+            saveKML(img_names, path_root)
+            deleteGeoNp(geonp_path)
+        
+        elif planta == '8':
+            print("Ajustando Planta Don Humberto...")
+            vueloList = findFlights(folder_path, img_names, geonp_path, transformer)
+            # resetMD(img_names, metadata_path, 'all')
+            # saveGeoM(img_names, metadata_path, geonp_path, path_root)   
+            # correctHDHM(folder_path, img_names, geonp_path, metadata_path, metadatanew_path, df, transformer, model, path_root)
+
+            # saveKML(img_names, path_root)
+            # deleteGeoNp(geonp_path)
+
     print("Todas la carpetas OK")
