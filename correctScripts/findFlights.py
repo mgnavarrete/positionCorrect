@@ -40,16 +40,16 @@ def findFlights(folder_path, img_names, geonp_path, transformer):
                 
                 if latdiff < londiff:
                     latOrder = True
-                    umb = latdiff * 0.05
+                    umb = latdiff * 0.1
                     
                 else:
                     latOrder = False
-                    umb = londiff * 0.05
+                    umb = londiff * 0.1
                     
             elif latOrder:
                 latdiff = latc - lastCords[0]
                 if -umb < latdiff < umb:
-                    vueloList[idxVuelo].append([image_path])
+                    vueloList[idxVuelo].append(image_path)
                     
                 else:
                     idxVuelo += 1
@@ -57,11 +57,12 @@ def findFlights(folder_path, img_names, geonp_path, transformer):
             else:
                 latdiff = latc - lastCords[0]
                 if -umb < latdiff < umb:
-                    vueloList[idxVuelo].append([image_path])
+                    vueloList[idxVuelo].append(image_path)
                 else:
                     idxVuelo += 1
                     vueloList.append([image_path])
-                    
+            
+            
             lastCords[0] = latc
             lastCords[1] = lonc
                     
