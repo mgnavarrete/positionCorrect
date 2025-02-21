@@ -265,10 +265,8 @@ def saveKMLFlights(path_imagenes, path_save, name):
 
 
 def findFlights(path_root,folder_path, img_names, geonp_path, transformer):
-    vueloList = []
-    listCords = []
-    idxVuelo = 0
     
+    listCords = []
     for image_path in tqdm(img_names, desc="Calculando lineas"):
         img = cv2.imread(folder_path + "/" + image_path)
         H, W, _ = img.shape
@@ -284,39 +282,25 @@ def findFlights(path_root,folder_path, img_names, geonp_path, transformer):
     
     latitudes, longitudes = zip(*listCords)
 
+
+
+    vueloList = []
+    idxVuelo = 0
     # Calcular los cambios de dirección
-    angles = []
+    vueloList.append([folder_path[0]])
+    
     for i in range(1, len(listCords)):
         dy = latitudes[i] - latitudes[i-1]
         dx = longitudes[i] - longitudes[i-1]
-        angle = np.arctan2(dy, dx) * (180 / np.pi)  # Convertir a grados
-        angles.append(angle)
+        angle = abs(np.arctan2(dy, dx) * (180 / np.pi))  # Convertir a grados
         
-    print(angles)
-    # Identificar cambios significativos en la dirección
-    angle_changes = [0]  # Primer punto no tiene cambio
-    threshold = 20  # Umbral en grados para considerar cambio de dirección
-    for i in range(1, len(angles)):
-        delta_angle = abs(angles[i] - angles[i-1])
-        if delta_angle > threshold:
-            angle_changes.append(1)  # Cambio de dirección
+        if 100 > angle > 70:
+            vueloList[idxVuelo].append(folder_path[i])
         else:
-            angle_changes.append(0)  # Dirección constante
-
-    # Agrupar segmentos en base a los cambios de dirección
-    segment_id = 0
-    segments = []
-    for i in range(len(angle_changes)):
-        if i == 0 or angle_changes[i] == 1:
-            segment_id += 1
-        segments.append(segment_id)
-        
-        
-            
-            
-            
-    print(f"Vuelos: {segments}")
-    print(f"Numero de vuelos: {len(segments)}")
-
-        
+            idxVuelo += 1
+            vueloList.append([folder_path[i]])
+                    
+    print("Numero de vuelos: ", len(vueloList))
+    for vuelo in vueloList:
+        print(f"Vuelo {vueloList.index(vuelo)}: {len(vuelo)} imagenes")
         
