@@ -54,6 +54,7 @@ def findFlights(folder_path, img_names, geonp_path, transformer):
             
     
     print(f"Vuelos: {vueloList}")
+    print(f"Numero de vuelos: {len(vueloList)}")
     return vueloList
     
     
