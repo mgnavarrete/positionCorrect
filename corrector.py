@@ -304,12 +304,13 @@ if __name__ == '__main__':
         
         elif planta == '8':
             print("Ajustando Planta Don Humberto...")
+            resetMD(img_names, metadata_path, 'all')
+            saveGeoM(img_names, metadata_path, geonp_path, path_root)   
             vueloList = findFlights(path_root, folder_path, img_names, geonp_path, transformer)
-            # resetMD(img_names, metadata_path, 'all')
-            # saveGeoM(img_names, metadata_path, geonp_path, path_root)   
+            
             # correctHDHM(folder_path, img_names, geonp_path, metadata_path, metadatanew_path, df, transformer, model, path_root)
 
             # saveKML(img_names, path_root)
-            # deleteGeoNp(geonp_path)
+            deleteGeoNp(geonp_path)
 
     print("Todas la carpetas OK")
