@@ -203,7 +203,7 @@ def saveKMLFlights(path_imagenes, path_save, name=""):
         '''
         file.write(a)
 
-        for idx, vuelo in tqdm(enumerate(path_imagenes), desc=f"Generando KML para vuelo"):
+        for idx, vuelo in tqdm(enumerate(path_imagenes), desc=f"Generando KML para vuelo", total=len(path_imagenes)):
             # Inicia un nuevo folder para cada vuelo
             a = f'''<Folder>
                 <name>Line_{idx}</name>
