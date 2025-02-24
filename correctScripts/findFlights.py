@@ -312,6 +312,7 @@ def findFlights(path_root,folder_path, img_names, geonp_path, transformer):
     lineas_path = path_root + '/lineas' 
     if not os.path.exists(lineas_path):
         os.makedirs(lineas_path)
+    print(f"Copiando imagenes a la carpeta {lineas_path}")
     for vuelo in newVuelos:
         for image_path in vuelo:
             shutil.copy(folder_path + "/" + image_path, lineas_path + "/" + image_path)
