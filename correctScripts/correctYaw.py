@@ -839,24 +839,11 @@ def correctYawLine(folder_path, geonp_path, metadata_path, metadatanew_path, tra
                                     offset_yaw2 = yawKML - yaw2                               
                                                     
                                     promedio = (offset_yaw1 + offset_yaw2) / 2
-                                    # print(f"yaw1: {yaw1}, yaw2: {yaw2}")    
-                                    yawList.append(offset_yaw1) 
-                                    yawList.append(offset_yaw2) 
+                                    offsetsLine.append(offset_yaw1)
+                                    offsetsLine.append(offset_yaw2)
                                     
                                     
-            # if image_path in list_images:
-            #     cv2.imwrite("results/"+ image_path, img)
-
-
-            if len(yawList) == 0:
-                offset_yaw = 0
-            else:
-                offsetList = closest_values_sorted(yawList, n=2)
-                # promdeio de los valores de yawList
-                offset_yaw = np.mean(offsetList)
-                
-            offsetsLine.append(offset_yaw)
-        
+           
         #eliminar los 0 de la lista 
         offsetsLine = [offset for offset in offsetsLine if offset != 0]
         conteo = Counter(offsetsLine)
