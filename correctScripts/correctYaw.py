@@ -867,7 +867,7 @@ def correctYawLine(folder_path, geonp_path, metadata_path, metadatanew_path, tra
         
         #eliminar los 0 de la lista 
         offsetsLine = [offset for offset in offsetsLine if offset != 0]
-        print(f"Offsets Linea: {offsetsLine}")
+        # print(f"Offsets Linea: {offsetsLine}")
         offset_yawLine = encontrar_valor_mas_comun(offsetsLine)
         print(f"Offset Yaw Linea: {offset_yawLine}")
         for image_path in line:
