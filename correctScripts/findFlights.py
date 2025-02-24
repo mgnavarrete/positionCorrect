@@ -314,5 +314,6 @@ def findFlights(path_root,folder_path, img_names, geonp_path, transformer):
         
 
     saveKMLFlights(newVuelos, path_root, 'Lines')
+    return newVuelos
 
         
