@@ -310,13 +310,16 @@ def findFlights(path_root,folder_path, img_names, geonp_path, transformer):
     print("Numero de vuelos: ", len(newVuelos))
 
     lineas_path = path_root + '/lineas' 
+    metadata_lineas_path = path_root + '/metadata_lineas'
     if not os.path.exists(lineas_path):
         os.makedirs(lineas_path)
+    if not os.path.exists(metadata_lineas_path):
+        os.makedirs(metadata_lineas_path)
     print(f"Copiando imagenes a la carpeta {lineas_path}")
     for vuelo in newVuelos:
         for image_path in vuelo:
             shutil.copy(folder_path + "/" + image_path, lineas_path + "/" + image_path)
-
+            shutil.copy(path_root + "/metadata/" + image_path[:-4] + '.txt', metadata_lineas_path + "/" + image_path[:-4] + '.txt')
 
     saveKMLFlights(newVuelos, path_root, 'Lines')
     return newVuelos
