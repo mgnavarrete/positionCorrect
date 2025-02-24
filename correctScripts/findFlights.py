@@ -294,7 +294,7 @@ def findFlights(path_root,folder_path, img_names, geonp_path, transformer):
         dx = longitudes[i] - longitudes[i-1]
         angle = abs(np.arctan2(dy, dx) * (180 / np.pi))  # Convertir a grados
         
-        if  angle > 60:
+        if  angle > 75:
             vueloList[idxVuelo].append(img_names[i])
         else:
             idxVuelo += 1
