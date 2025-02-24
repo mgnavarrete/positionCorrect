@@ -1119,7 +1119,10 @@ def correctHLine(folder_path, img_names, geonp_path, metadata_path, metadatanew_
                 
                     
         offset_alturaLine = encontrar_valor_mas_comun(offset_alturaLine)
+        if offset_alturaLine == None:
+            offset_alturaLine = 0
         print(f"Offset Altura Linea: {offset_alturaLine}")
+        
         
         for image_path in line:
             save_metadata(metadata_path, image_path, offset_alturaLine, metadatanew_path, "offset_altura")
