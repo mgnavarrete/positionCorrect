@@ -1117,7 +1117,9 @@ def correctHLine(folder_path, img_names, geonp_path, metadata_path, metadatanew_
           
                 
                 
-                    
+        #eliminar los 0 de la lista 
+        offset_alturaLine = [offset for offset in offset_alturaLine if offset != 0]    
+                 
         offset_alturaLine = encontrar_valor_mas_comun(offset_alturaLine)
         if offset_alturaLine == None:
             offset_alturaLine = 0

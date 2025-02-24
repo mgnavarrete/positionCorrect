@@ -1215,7 +1215,8 @@ def correctELine(folder_path, img_names, geonp_path, metadata_path, metadatanew_
                     offsetList.append(offset_prev)
 
                    
-
+        #eliminar los 0 de la lista 
+        offsetList = [offset for offset in offsetList if offset != 0]
         offset_eLine = encontrar_valor_mas_comun(offsetList)
         print(f"Offset E Linea: {offset_eLine}")
          
