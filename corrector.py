@@ -307,7 +307,7 @@ if __name__ == '__main__':
             resetMD(img_names, metadata_path, 'all')
             saveGeoM(img_names, metadata_path, geonp_path, path_root)   
             vueloList = findFlights(path_root, folder_path, img_names, geonp_path, transformer)
-            correctYawLine(folder_path, geonp_path, metadata_path, metadatanew_path, df, transformer, model, vueloList)
+            correctYawLine(folder_path, geonp_path, metadata_path, metadatanew_path, transformer, model, yawKML, ancho, list_images, areaUmb, difUmb, vueloList)
             # correctHDHM(folder_path, img_names, geonp_path, metadata_path, metadatanew_path, df, transformer, model, path_root)
             saveKMLFlights(vueloList, path_root, 'Yaw')
             correctHLine(folder_path, geonp_path, metadata_path, metadatanew_path, df, transformer, model, vueloList)
