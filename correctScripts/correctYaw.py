@@ -696,14 +696,14 @@ def correctYawLine(folder_path, geonp_path, metadata_path, metadatanew_path, tra
 
                         # Encontrar contornos
                         contours, _ = cv2.findContours(thresholded.astype(np.uint8), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-                        if image_path in list_images:
-                            cv2.imwrite(f'masks/{image_path[:-4]}_{j}.png', mask)
+        
+                        # cv2.imwrite(f'masks/{image_path[:-4]}_{j}.png', mask)
                         if contours:
                             # Encuentra el contorno más grande
                             largest_contour = max(contours, key=cv2.contourArea)
 
                             # Aproximación del polígono
-                            epsilon = 0.015* cv2.arcLength(largest_contour, True)
+                            epsilon = 0.045 * cv2.arcLength(largest_contour, True)
                             approx_polygon = cv2.approxPolyDP(largest_contour, epsilon, True)
                             approx_polygon = sorted(approx_polygon, key=lambda x: x[0][0])
                             approx_polygon = np.array(approx_polygon, dtype=int)
@@ -756,7 +756,7 @@ def correctYawLine(folder_path, geonp_path, metadata_path, metadatanew_path, tra
                                 
                                 
                                 dif_ancho = abs(ancho - avg_ancho)
-          
+                                # print(f"dif_ancho: {dif_ancho}")
                                 
                                 
                                 x1 = approx_polygon[0][0][0]
@@ -776,7 +776,9 @@ def correctYawLine(folder_path, geonp_path, metadata_path, metadatanew_path, tra
                                 x4, y4 = puntos_ordenados[3]
 
                                 area = calcular_area_poligono(puntos_ordenados)
-
+                                # Guardar area en archivo cvs con nombre de imagen
+                                # with open('areas.csv', 'a') as f:
+                                #     f.write(f"{image_path[:-4]},{area}\n")
                                 if dif_ancho < difUmb and area > areaUmb:
                                     
                                     # Convertir a formato numpy
@@ -797,21 +799,32 @@ def correctYawLine(folder_path, geonp_path, metadata_path, metadatanew_path, tra
                                     x2_utm, y2_utm = geoImg[y2][x2][0], geoImg[y2][x2][1]
                                     x3_utm, y3_utm = geoImg[y3][x3][0], geoImg[y3][x3][1]
                                     x4_utm, y4_utm = geoImg[y4][x4][0], geoImg[y4][x4][1]
-                                   
+                                    # print(f"coordenadas del poligono: {x1_utm, y1_utm}, {x2_utm, y2_utm}, {x3_utm, y3_utm}, {x4_utm, y4_utm}")
+
                                     # Dibujar el polígono en la imagen original
                                     lon1, lat1 = transformer.transform(x1_utm, y1_utm)
                                     lon2, lat2 = transformer.transform(x2_utm, y2_utm)
                                     lon3, lat3 = transformer.transform(x3_utm, y3_utm)
                                     lon4, lat4 = transformer.transform(x4_utm, y4_utm)
 
-                                    yaw1 = anguloNorte(float(lat1), float(lon1), float(lat4), float(lon4))
-                                    yaw2 = anguloNorte(float(lat2), float(lon2), float(lat3), float(lon3))
-                                   
-                                    offset_yaw1 = yawKML - yaw1
-                                    offset_yaw2 = yawKML - yaw2
                                     with open(f'{metadata_path}/{image_path[:-4] }.txt', 'r') as archivo:
                                         data = json.load(archivo)
                                     yawDegree = data["FlightYawDegree"]
+                                    
+                                    # print(f"coordenadas del poligono: {lat1, lon1}, {lat2, lon2}, {lat3, lon3}, {lat4, lon4}")
+                                    yaw1 = anguloNorte(float(lat1), float(lon1), float(lat4), float(lon4))
+                                    yaw2 = anguloNorte(float(lat2), float(lon2), float(lat3), float(lon3))
+                                    
+                                    offset_yaw1 = yawKML - yaw1
+                                    offset_yaw2 = yawKML - yaw2                               
+                                    # print(f"offset_yaw: {offset_yaw}")
+                                    # if offset_yaw1 > 170 or offset_yaw1 < -170 or offset_yaw2 > 170 or offset_yaw2 < -170:
+                                    #     # print("Inverso")
+                                    #     yaw1 = anguloNorte(float(lat4), float(lon4), float(lat1), float(lon1))
+                                    #     yaw2 = anguloNorte(float(lat3), float(lon3), float(lat2), float(lon2))
+                                    
+                                    #     offset_yaw1 = yawKML - yaw1
+                                    #     offset_yaw2 = yawKML - yaw2
                                     
                                     if float(yawDegree) > 0:
                                         # print(f"coordenadas del poligono: {lat1, lon1}, {lat2, lon2}, {lat3, lon3}, {lat4, lon4}")
@@ -826,9 +839,9 @@ def correctYawLine(folder_path, geonp_path, metadata_path, metadatanew_path, tra
                                     offset_yaw2 = yawKML - yaw2                               
                                                     
                                     promedio = (offset_yaw1 + offset_yaw2) / 2
-                          
-                                    yawList.append(offset_yaw1)
-                                    yawList.append(offset_yaw2)
+                                    # print(f"yaw1: {yaw1}, yaw2: {yaw2}")    
+                                    yawList.append(offset_yaw1) 
+                                    yawList.append(offset_yaw2) 
                                     
                                     
             if image_path in list_images:
