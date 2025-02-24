@@ -673,9 +673,9 @@ def correctYawLLK(folder_path, img_names, geonp_path, metadata_path, metadatanew
 def correctYawLine(folder_path, geonp_path, metadata_path, metadatanew_path, transformer, model, yawKML, ancho, list_images, areaUmb, difUmb, linesList):
 
 
-    for line in linesList:
+    for e, line in enumerate(linesList):
         offsetsLine = []
-        for image_path in tqdm(line, desc="Calculando Offset Yaw Linea"):
+        for image_path in tqdm(line, desc=f"Calculando Offset Yaw Linea {e} "):
             
 
             img = cv2.imread(folder_path + "/" + image_path)
@@ -844,8 +844,8 @@ def correctYawLine(folder_path, geonp_path, metadata_path, metadatanew_path, tra
                                     yawList.append(offset_yaw2) 
                                     
                                     
-            if image_path in list_images:
-                cv2.imwrite("results/"+ image_path, img)
+            # if image_path in list_images:
+            #     cv2.imwrite("results/"+ image_path, img)
 
 
             if len(yawList) == 0:
@@ -863,6 +863,7 @@ def correctYawLine(folder_path, geonp_path, metadata_path, metadatanew_path, tra
         for image_path in line:
             save_metadata(metadata_path, image_path, offset_yawLine, metadatanew_path, "offset_yaw")
     
+    print(f"Offset Yaw Linea calculado para todas las imágenes de la carpeta {folder_path}")
     
     
     

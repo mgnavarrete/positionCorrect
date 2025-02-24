@@ -1109,7 +1109,7 @@ def correctHLine(folder_path, img_names, geonp_path, metadata_path, metadatanew_
 
 
             # print("El valor de 'offset_altura' se ha modificado con éxito.")
-        print(f"Offset de Altura calculado para todas las imágenes de la carpeta {folder_path}")
+    print(f"Offset de Altura calculado para todas las imágenes de la carpeta {path_root}")
 
 
 
