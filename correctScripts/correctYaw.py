@@ -865,7 +865,7 @@ def correctYawLine(folder_path, geonp_path, metadata_path, metadatanew_path, tra
         for image_path in line:
             save_metadata(metadata_path, image_path, offset_yawLine, metadatanew_path, "offset_yaw")
     
-    print(f"Offset Yaw Linea calculado para todas las imágenes de la carpeta {path_root}")
+    print(f"Offset Yaw Linea calculado para todas las imágenes de la carpeta {folder_path}")
     
     
     
