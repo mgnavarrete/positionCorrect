@@ -304,12 +304,13 @@ if __name__ == '__main__':
         
         elif planta == '8':
             print("Ajustando Planta Don Humberto...")
-            resetMD(img_names, metadata_path, 'all')
-            saveGeoM(img_names, metadata_path, geonp_path, path_root)   
+            # resetMD(img_names, metadata_path, 'all')
+            # saveGeoM(img_names, metadata_path, geonp_path, path_root)   
             linesList = findFlights(path_root, folder_path, img_names, geonp_path, transformer)
-            correctYawLine(folder_path, geonp_path, metadata_path, metadatanew_path, transformer, model, yawKML, ancho, list_images, areaUmb, difUmb, linesList)
-            # correctHDHM(folder_path, img_names, geonp_path, metadata_path, metadatanew_path, df, transformer, model, path_root)
-            saveKMLFlights(linesList, path_root, 'Yaw')
+            # correctYawLine(folder_path, geonp_path, metadata_path, metadatanew_path, transformer, model, yawKML, ancho, list_images, areaUmb, difUmb, linesList)
+            # # correctHDHM(folder_path, img_names, geonp_path, metadata_path, metadatanew_path, df, transformer, model, path_root)
+            # saveKMLFlights(linesList, path_root, 'Yaw')
+            saveGeoM(img_names, metadata_path, geonp_path, path_root) 
             correctHLine(folder_path, img_names, geonp_path, metadata_path, metadatanew_path, df, transformer, model, yawKML, ancho, list_images, areaUmb, difUmb, linesList)
             saveKMLFlights(linesList, path_root, 'Yaw&H')
             deleteGeoNp(geonp_path)
