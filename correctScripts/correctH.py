@@ -1146,13 +1146,13 @@ def correctHLine(folder_path, geonp_path, metadata_path, metadatanew_path, df, t
                     offset_altura = distancia / distanciaKML   
                     offset_alturaLine.append(offset_altura)
                     
-            conteo = Counter(offset_alturaLine)
-            offset_alturaLine = conteo.most_common(1)[0][0]
-            print(f"Offset Altura Linea: {offset_alturaLine}")
-            
-            for image_path in line:
-                save_metadata(metadata_path, image_path, offset_alturaLine, metadatanew_path, "offset_altura")
-            
+        conteo = Counter(offset_alturaLine)
+        offset_alturaLine = conteo.most_common(1)[0][0]
+        print(f"Offset Altura Linea: {offset_alturaLine}")
+        
+        for image_path in line:
+            save_metadata(metadata_path, image_path, offset_alturaLine, metadatanew_path, "offset_altura")
+        
             
 
 

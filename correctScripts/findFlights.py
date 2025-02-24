@@ -13,7 +13,7 @@ import json
 import os
 import string
 from tqdm import tqdm
-
+import shutil
 
 def dms2dd(data):
     dd = float(data[0]) + float(data[1]) / 60 + float(data[2]) / (60 * 60)
@@ -301,19 +301,23 @@ def findFlights(path_root,folder_path, img_names, geonp_path, transformer):
             idxVuelo += 1
             vueloList.append([img_names[i]])
                     
-    print("Numero de vuelos: ", len(vueloList))
+
     newVuelos = vueloList.copy()
     for vuelo in vueloList:
-        print(f"Vuelo {vueloList.index(vuelo)}: {len(vuelo)} imagenes")
         if len(vuelo) < 4:
             newVuelos.remove(vuelo)
     
     print("Numero de vuelos: ", len(newVuelos))
-    for vuelo in newVuelos:
-        print(f"Vuelo {newVuelos.index(vuelo)}: {len(vuelo)} imagenes")
-        
 
-    saveKMLFlights(newVuelos, path_root, 'Lines')
+    lineas_path = path_root + '/lineas' 
+    if not os.path.exists(lineas_path):
+        os.makedirs(lineas_path)
+    for vuelo in newVuelos:
+        for image_path in vuelo:
+            shutil.copy(folder_path + "/" + image_path, lineas_path + "/" + image_path)
+
+
+    saveKMLFlights(newVuelos, lineas_path, 'Lines')
     return newVuelos
 
         

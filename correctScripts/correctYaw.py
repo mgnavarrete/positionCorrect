@@ -809,6 +809,24 @@ def correctYawLine(folder_path, geonp_path, metadata_path, metadatanew_path, tra
                                    
                                     offset_yaw1 = yawKML - yaw1
                                     offset_yaw2 = yawKML - yaw2
+                                    with open(f'{metadata_path}/{image_path[:-4] }.txt', 'r') as archivo:
+                                        data = json.load(archivo)
+                                    yawDegree = data["FlightYawDegree"]
+                                    
+                                    if float(yawDegree) > 0:
+                                        # print(f"coordenadas del poligono: {lat1, lon1}, {lat2, lon2}, {lat3, lon3}, {lat4, lon4}")
+                                        yaw1 = anguloNorte(float(lat1), float(lon1), float(lat4), float(lon4))
+                                        yaw2 = anguloNorte(float(lat2), float(lon2), float(lat3), float(lon3))
+                                    
+                                    else:
+                                        yaw1 = anguloNorte(float(lat4), float(lon4), float(lat1), float(lon1))
+                                        yaw2 = anguloNorte(float(lat3), float(lon3), float(lat2), float(lon2))
+                                        
+                                    offset_yaw1 = yawKML - yaw1
+                                    offset_yaw2 = yawKML - yaw2                               
+                                                    
+                                    promedio = (offset_yaw1 + offset_yaw2) / 2
+                          
                                     yawList.append(offset_yaw1)
                                     yawList.append(offset_yaw2)
                                     
