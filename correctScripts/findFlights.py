@@ -192,9 +192,9 @@ def haversine_distance(lat1, lon1, lat2, lon2):
     return distance 
 
 
-def saveKMLFlights(path_imagenes, path_save):
+def saveKMLFlights(path_imagenes, path_save, name=""):
     # Abre un solo archivo KML para todos los vuelos
-    with open(f"{path_save}/{path_save.split('/')[-1]}.kml", 'w') as file:
+    with open(f"{path_save}/{path_save.split('/')[-1]}_{name}.kml", 'w') as file:
         # Escribe el encabezado del archivo KML
         a = f'''<?xml version="1.0" encoding="UTF-8"?>
     <kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
@@ -262,7 +262,7 @@ def saveKMLFlights(path_imagenes, path_save):
     </kml>'''
         file.write(a)
 
-    print(f"KML generado para todos los vuelos en la carpeta {path_save + '/' + path_save.split('/')[-1] + '.kml'}")
+    print(f"KML generado para todos los vuelos en la carpeta {path_save + '/' + path_save.split('/')[-1] +'_'+ name + '.kml'}")
 
 
 def findFlights(path_root,folder_path, img_names, geonp_path, transformer):
@@ -313,6 +313,6 @@ def findFlights(path_root,folder_path, img_names, geonp_path, transformer):
         print(f"Vuelo {newVuelos.index(vuelo)}: {len(vuelo)} imagenes")
         
 
-    saveKMLFlights(newVuelos, path_root)
+    saveKMLFlights(newVuelos, path_root, 'Lines')
 
         

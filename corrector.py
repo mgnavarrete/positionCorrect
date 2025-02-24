@@ -1,9 +1,9 @@
-from correctScripts.correctH import correctH, correctHCDS, correctHLLK, correctHDHM
+from correctScripts.correctH import correctH, correctHCDS, correctHLLK, correctHDHM, correctHLine
 from correctScripts.correctE import correctE, correctECDS, correctELLK2
-from correctScripts.correctYaw import correctYaw, correctYawCDS, correctYawLLK
+from correctScripts.correctYaw import correctYaw, correctYawCDS, correctYawLLK, correctYawLine
 from correctScripts.correctN import correctNLLK
 from correctScripts.saveGeoMatriz import saveGeoM, saveKML
-from correctScripts.findFlights import findFlights
+from correctScripts.findFlights import findFlights, saveKMLFlights
 from ultralytics import YOLO
 import os
 import cv2
@@ -307,10 +307,11 @@ if __name__ == '__main__':
             resetMD(img_names, metadata_path, 'all')
             saveGeoM(img_names, metadata_path, geonp_path, path_root)   
             vueloList = findFlights(path_root, folder_path, img_names, geonp_path, transformer)
-            
+            correctYawLine(folder_path, geonp_path, metadata_path, metadatanew_path, df, transformer, model, vueloList)
             # correctHDHM(folder_path, img_names, geonp_path, metadata_path, metadatanew_path, df, transformer, model, path_root)
-
-            # saveKML(img_names, path_root)
+            saveKMLFlights(vueloList, path_root, 'Yaw')
+            correctHLine(folder_path, geonp_path, metadata_path, metadatanew_path, df, transformer, model, vueloList)
+            saveKMLFlights(vueloList, path_root, 'Yaw&H')
             deleteGeoNp(geonp_path)
 
     print("Todas la carpetas OK")
