@@ -193,21 +193,28 @@ def haversine_distance(lat1, lon1, lat2, lon2):
 
 
 def saveKMLFlights(path_imagenes, path_save):
-    for idx, vuelo in enumerate(path_imagenes):
-        with open(f"{path_save}/{path_save.split('/')[-1]}_Line_{idx}.kml", 'w') as file:
-            a = f'''<?xml version="1.0" encoding="UTF-8"?>
-        <kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
-        <Folder>
-            <name>{path_save.split('/')[-1]}_Line_{idx}</name>
-            '''
+    # Abre un solo archivo KML para todos los vuelos
+    with open(f"{path_save}/{path_save.split('/')[-1]}.kml", 'w') as file:
+        # Escribe el encabezado del archivo KML
+        a = f'''<?xml version="1.0" encoding="UTF-8"?>
+    <kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+    <Document>
+        <name>{path_save.split('/')[-1]}</name>
+        '''
+        file.write(a)
+
+        for idx, vuelo in enumerate(path_imagenes):
+            # Inicia un nuevo folder para cada vuelo
+            a = f'''<Folder>
+                <name>Line_{idx}</name>
+                '''
             file.write(a)
+
             vuelo_ant = ''
             for f_name in tqdm(vuelo, desc=f"Generando KML para vuelo {idx}"):
-                
                 nombre = f_name[:-4]
-                
                 vuelo = 'cvat'
-         
+
                 # Carga la metadata de la imagen
                 str_metada_file = f"{path_save}/metadata/{nombre}.txt"
                 with open(str_metada_file) as metadata_file:
@@ -217,8 +224,7 @@ def saveKMLFlights(path_imagenes, path_save):
                 m = save_georef_matriz(data2, data2['offset_E_tot'], data2['offset_N_tot'], data2['offset_yaw'], data2['offset_altura'], modo_altura)
                 p1_ll = utm.to_latlon(m[0][0][0], m[0][0][1], int(m[0][0][2]), string.ascii_uppercase[int(m[0][0][3])])
                 p2_ll = utm.to_latlon(m[0][-1][0], m[0][-1][1], int(m[0][-1][2]), string.ascii_uppercase[int(m[0][-1][3])])
-                p3_ll = utm.to_latlon(m[-1][-1][0], m[-1][-1][1], int(m[-1][-1][2]),
-                                    string.ascii_uppercase[int(m[-1][-1][3])])
+                p3_ll = utm.to_latlon(m[-1][-1][0], m[-1][-1][1], int(m[-1][-1][2]), string.ascii_uppercase[int(m[-1][-1][3])])
                 p4_ll = utm.to_latlon(m[-1][0][0], m[-1][0][1], int(m[-1][0][2]), string.ascii_uppercase[int(m[-1][0][3])])
 
                 # Coordenadas para el kml
@@ -230,19 +236,8 @@ def saveKMLFlights(path_imagenes, path_save):
                                     "_DV" + str(data2['desface_gps']) + \
                                     "_DA" + str(data2['offset_altura']) + \
                                     "_MA" + str(data2['modo_altura'])
-                if vuelo != vuelo_ant:
-                    if vuelo_ant != '':
-                        a = f'''</Folder>'''
-                        file.write(a)
-
-                    a = f'''<Folder>
-                            <name>{vuelo} - {txt_desplazamiento}</name>
-                            '''
-                    file.write(a)
-                    vuelo_ant = vuelo
 
                 txt_href = f'original_img/{nombre}.JPG'
-                # print(nombre)
                 a = f'''<GroundOverlay>
                 <name>{nombre + txt_desplazamiento}</name>
                 <Icon>
@@ -257,12 +252,17 @@ def saveKMLFlights(path_imagenes, path_save):
             </GroundOverlay>
             '''
                 file.write(a)
-            a = '''</Folder>
-            </Folder>
-        </kml>'''
+
+            # Cierra el folder del vuelo actual
+            a = '''</Folder>'''
             file.write(a)
 
-        print(f"KML generado para el vuelo {idx} en la carpeta {path_save + '/' + path_save.split('/')[-1] + f'_Line_{idx}.kml'}")
+        # Cierra el documento KML
+        a = '''</Document>
+    </kml>'''
+        file.write(a)
+
+    print(f"KML generado para todos los vuelos en la carpeta {path_save + '/' + path_save.split('/')[-1] + '.kml'}")
 
 
 def findFlights(path_root,folder_path, img_names, geonp_path, transformer):

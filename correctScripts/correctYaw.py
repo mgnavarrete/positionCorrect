@@ -11,6 +11,7 @@ import tkinter as tk
 from tkinter import filedialog
 from glob import glob
 from tqdm import tqdm
+from collections import Counter
 
 def haversine_distance(lat1, lon1, lat2, lon2):
     R = 6371  # Radio de la Tierra en kilómetros
@@ -669,7 +670,7 @@ def correctYawLLK(folder_path, img_names, geonp_path, metadata_path, metadatanew
     
     
     
-def correctYawLine(folder_path, img_names, geonp_path, metadata_path, metadatanew_path, transformer, model, yawKML, ancho, list_images, areaUmb, difUmb, linesList):
+def correctYawLine(folder_path, geonp_path, metadata_path, metadatanew_path, transformer, model, yawKML, ancho, list_images, areaUmb, difUmb, linesList):
 
 
     for line in linesList:
@@ -824,6 +825,12 @@ def correctYawLine(folder_path, img_names, geonp_path, metadata_path, metadatane
                 offset_yaw = np.mean(offsetList)
                 
             offsetsLine.append(offset_yaw)
+        
+        conteo = Counter(offsetsLine)
+        offset_yawLine = conteo.most_common(1)[0][0]
+        print(f"Offset Yaw Linea: {offset_yawLine}")
+        for image_path in line:
+            save_metadata(metadata_path, image_path, offset_yawLine, metadatanew_path, "offset_yaw")
     
     
     
