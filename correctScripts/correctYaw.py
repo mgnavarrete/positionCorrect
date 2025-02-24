@@ -680,6 +680,11 @@ def encontrar_valor_mas_comun(offsets, tolerancia_factor=0.2):
     std_dev = np.std(offsets)
     tolerancia = std_dev * tolerancia_factor  # Ajusta la tolerancia relativa a la dispersión de los datos
 
+    # Verificar si la tolerancia es cero
+    if tolerancia == 0:
+        # Si la tolerancia es cero, devolver el valor más común directamente
+        return Counter(offsets).most_common(1)[0][0]
+
     # Agrupar valores dentro de la tolerancia
     rounded_offsets = [round(offset / tolerancia) * tolerancia for offset in offsets]
 
