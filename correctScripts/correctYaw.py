@@ -846,6 +846,7 @@ def correctYawLine(folder_path, geonp_path, metadata_path, metadatanew_path, tra
            
         #eliminar los 0 de la lista 
         offsetsLine = [offset for offset in offsetsLine if offset != 0]
+        print(f"Offsets Linea: {offsetsLine}")
         conteo = Counter(offsetsLine)
         offset_yawLine = conteo.most_common(1)[0][0]
         print(f"Offset Yaw Linea: {offset_yawLine}")
