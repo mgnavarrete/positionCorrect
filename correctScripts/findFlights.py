@@ -262,7 +262,7 @@ def saveKMLFlights(path_imagenes, path_save):
         </kml>'''
             file.write(a)
 
-        print(f"KML generado para el vuelo {idx} en la carpeta {path_save + '/' + path_save.split('/')[-1] + f'_{name}_vuelo_{idx}.kml'}")
+        print(f"KML generado para el vuelo {idx} en la carpeta {path_save + '/' + path_save.split('/')[-1] + f'_Line_{idx}.kml'}")
 
 
 def findFlights(path_root,folder_path, img_names, geonp_path, transformer):
