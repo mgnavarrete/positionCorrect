@@ -192,16 +192,17 @@ def haversine_distance(lat1, lon1, lat2, lon2):
     return distance 
 
 
-def saveKMLFlights(path_imagenes, path_save, name):
-    with open(path_save + f'/{name}.kml', 'w') as file:
+def saveKMLFlights(path_imagenes, path_save):
+    for idx, vuelo in enumerate(path_imagenes):
+        with open(f"{path_save}/{path_save.split('/')[-1]}_Line_{idx}.kml", 'w') as file:
             a = f'''<?xml version="1.0" encoding="UTF-8"?>
         <kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
         <Folder>
-            <name>{path_save.split('/')[-1]}_{name}</name>
+            <name>{path_save.split('/')[-1]}_Line_{idx}</name>
             '''
             file.write(a)
             vuelo_ant = ''
-            for f_name in tqdm(path_imagenes, desc="Generando KML"):
+            for f_name in tqdm(vuelo, desc=f"Generando KML para vuelo {idx}"):
                 
                 nombre = f_name[:-4]
                 
@@ -261,7 +262,7 @@ def saveKMLFlights(path_imagenes, path_save, name):
         </kml>'''
             file.write(a)
 
-    print(f"KML generado para la carpeta {path_save + '/' + path_save.split('/')[-1] + f'_{name}.kml'}")
+        print(f"KML generado para el vuelo {idx} en la carpeta {path_save + '/' + path_save.split('/')[-1] + f'_{name}_vuelo_{idx}.kml'}")
 
 
 def findFlights(path_root,folder_path, img_names, geonp_path, transformer):
@@ -311,7 +312,7 @@ def findFlights(path_root,folder_path, img_names, geonp_path, transformer):
     for vuelo in newVuelos:
         print(f"Vuelo {newVuelos.index(vuelo)}: {len(vuelo)} imagenes")
         
-    for vuelo in newVuelos:
-        saveKMLFlights(vuelo, path_root, f"Vuelo_{newVuelos.index(vuelo)}")
+
+    saveKMLFlights(newVuelos, path_root)
 
         
