@@ -318,7 +318,7 @@ def findFlights(path_root,folder_path, img_names, geonp_path, transformer):
             shutil.copy(folder_path + "/" + image_path, lineas_path + "/" + image_path)
 
 
-    saveKMLFlights(newVuelos, lineas_path, 'Lines')
+    saveKMLFlights(newVuelos, path_root, 'Lines')
     return newVuelos
 
         
