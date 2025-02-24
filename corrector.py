@@ -1,5 +1,5 @@
 from correctScripts.correctH import correctH, correctHCDS, correctHLLK, correctHDHM, correctHLine
-from correctScripts.correctE import correctE, correctECDS, correctELLK2
+from correctScripts.correctE import correctE, correctECDS, correctELLK2, correctELine
 from correctScripts.correctYaw import correctYaw, correctYawCDS, correctYawLLK, correctYawLine
 from correctScripts.correctN import correctNLLK
 from correctScripts.saveGeoMatriz import saveGeoM, saveKML
@@ -312,7 +312,10 @@ if __name__ == '__main__':
             saveKMLFlights(linesList, path_root, 'Yaw')
             saveGeoM(img_names, metadata_path, geonp_path, path_root) 
             correctHLine(folder_path, img_names, geonp_path, metadata_path, metadatanew_path, df, transformer, model, ancho, areaUmb, path_root, linesList)
-            saveKMLFlights(linesList, path_root, 'Yaw&H')
+            saveKMLFlights(linesList, path_root, 'Yaw_H')
+            saveGeoM(img_names, metadata_path, geonp_path, path_root) 
+            correctELine(folder_path, img_names, geonp_path, metadata_path, metadatanew_path, df, transformer, model, path_root, linesList)
+            saveKMLFlights(linesList, path_root, 'Yaw_H_E')
             deleteGeoNp(geonp_path)
 
     print("Todas la carpetas OK")

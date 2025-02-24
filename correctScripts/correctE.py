@@ -11,6 +11,7 @@ import tkinter as tk
 from tkinter import filedialog
 from glob import glob
 from tqdm import tqdm
+from collections import Counter
 
 def estan_en_linea(long1, long2, umbral=0.5):
     # Función para convertir de DMS a grados decimales
@@ -1078,7 +1079,129 @@ def correctELLK2(folder_path, img_names, geonp_path, metadata_path, metadatanew_
         # cv2.imwrite(f"{folder_path}/{image_path}", img)
     print(f"Offset E calculado para todas las imágenes de la carpeta {folder_path}") 
  
- 
+
+
+
+
+def correctELine(folder_path, img_names, geonp_path, metadata_path, metadatanew_path, df, transformer, model, path_root, linesList):
+
+    coordenadas_dict = df.set_index('name').to_dict(orient='index')
+
+    for e, line in enumerate(linesList):
+        offsetList = []
+        for image_path in tqdm(line, desc=f"Calculando Offset E {e}"):
+         
+            img = cv2.imread(folder_path + "/" + image_path)
+            H, W, _ = img.shape
+            img_resized = cv2.resize(img, (640, 640))
+            results = model(source=img_resized, verbose=False)
+            centroList = []
+            mascara = np.zeros((512, 640), dtype=np.float32)
+            for result in results:
+                if result.masks is not None:
+                    for j, mask in enumerate(result.masks.data):
+                        mask = mask.cpu().numpy() * 255
+                        mask = cv2.resize(mask, (W, H))
+                        img = cv2.resize(img, (W, H))
+                        # Convertir la máscara a una imagen binaria
+                        _, thresholded = cv2.threshold(mask, 25, 255, cv2.THRESH_BINARY)
+
+                        # Encontrar contornos
+                        contours, _ = cv2.findContours(thresholded.astype(np.uint8), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+                        # cv2.imwrite(f'masks/{image_path[:-4]}_{j}.png', mask)
+                        if contours:
+                            # Encuentra el contorno más grande
+                            largest_contour = max(contours, key=cv2.contourArea)
+
+                            # Aproximación del polígono
+                            epsilon = 0.015* cv2.arcLength(largest_contour, True)
+                            approx_polygon = cv2.approxPolyDP(largest_contour, epsilon, True)
+                            approx_polygon = sorted(approx_polygon, key=lambda x: x[0][0])
+                            approx_polygon = np.array(approx_polygon, dtype=int)
+
+                            # print(f"approx_polygon: {approx_polygon}")
+                            if len(approx_polygon) > 3:
+                                mascara += mask
+                                x1 = approx_polygon[0][0][0]
+                                y1 = approx_polygon[0][0][1]
+                                x2 = approx_polygon[1][0][0]
+                                y2 = approx_polygon[1][0][1]
+                                x3 = approx_polygon[2][0][0]
+                                y3 = approx_polygon[2][0][1]
+                                x4 = approx_polygon[3][0][0]
+                                y4 = approx_polygon[3][0][1]
+
+                                puntos = [(x1, y1), (x2, y2), (x3, y3), (x4, y4)]
+                                puntos_ordenados = ordenar_puntos(puntos)
+                                x1, y1 = puntos_ordenados[0]
+                                x2, y2 = puntos_ordenados[1]
+                                x3, y3 = puntos_ordenados[2]
+                                x4, y4 = puntos_ordenados[3]
+
+                                area = calcular_area_poligono(puntos_ordenados)
+                                
+
+                                geoImg = np.load(f"{geonp_path}/{image_path[:-4]}.npy")
+
+                                x1_utm, y1_utm = geoImg[y1][x1][0], geoImg[y1][x1][1]
+                                x2_utm, y2_utm = geoImg[y2][x2][0], geoImg[y2][x2][1]
+                                x3_utm, y3_utm = geoImg[y3][x3][0], geoImg[y3][x3][1]
+                                x4_utm, y4_utm = geoImg[y4][x4][0], geoImg[y4][x4][1]
+
+                                lon1, lat1 = transformer.transform(x1_utm, y1_utm)
+                                lon2, lat2 = transformer.transform(x2_utm, y2_utm)
+                                lon3, lat3 = transformer.transform(x3_utm, y3_utm)
+                                lon4, lat4 = transformer.transform(x4_utm, y4_utm)
+
+                                puntos_np = np.array([(x1,y1),(x2,y2),(x3,y3),(x4,y4)], np.int32)
+                                puntos_np = puntos_np.reshape((-1, 1, 2))
+
+                                xc = int(round((x1 + x2 + x3 + x4) / 4))
+                                yc = int(round((y1 + y2 + y3 + y4) / 4))
+       
+                            
+                                geoImg = np.load(f"{geonp_path}/{image_path[:-4]}.npy")
+
+                                x_utm, y_utm = geoImg[yc][xc][0], geoImg[yc][xc][1]
+                                lonImg, latImg = transformer.transform(x_utm, y_utm)
+
+                                centroList.append([xc, yc, lonImg, latImg])
+
+            cv2.imwrite(f"{path_root}/masks/{image_path}", mascara)
+            if len(centroList) > 0:
+                # print("Ambos grupos tienen elementos")
+                for i in centroList:
+                    xu ,yu,lonu,latu = i
+                    cv2.circle(img, (xu, yu), 5, (0, 0, 255), -1)
+        
+                    namep1, minp1, polynamep1 = findClosest(xu,yu,df,'point', geoImg, transformer)
+                    # Obtener lon y lat directamente del diccionario
+                    lonKMLu, latKMLu= coordenadas_dict[namep1][polynamep1].split(",")
+                    lonKMLu, latKMLu = float(lonKMLu), float(latKMLu)
+            
+                    # Calcular la diferencia de longitud y la distancia este-oeste
+                    diff_lonu = lonKMLu - lonu
+            
+                    # Earth's circumference along the equator in kilometers
+                    earth_circumference_km = 40075.0
+
+                    # Convert offset from degrees to kilometers (1 degree = Earth's circumference / 360)
+                    offset_kmu = diff_lonu * (earth_circumference_km / 360)
+            
+
+                    # Convert kilometers to meters
+                    offset_prev = offset_kmu * 1000
+                    offsetList.append(offset_prev)
+
+                   
+
+        conteo = Counter(offsetList)
+        offset_eLine = conteo.most_common(1)[0][0]
+        print(f"Offset E Linea: {offset_eLine}")
+         
+    print(f"Offset E calculado para todas las imágenes de la carpeta {folder_path}") 
+
 
  
 if __name__ == '__main__':    
