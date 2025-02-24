@@ -998,7 +998,27 @@ def correctHDHM(folder_path, img_names, geonp_path, metadata_path, metadatanew_p
         print(f"Offset de Altura calculado para todas las imágenes de la carpeta {folder_path}")
 
 
+def encontrar_valor_mas_comun(offsets, tolerancia_factor=0.2):
+    if not offsets:
+        return None
+    
+    # Convertir a numpy array
+    offsets = np.array(offsets)
 
+    # Calcular la desviación estándar para determinar la tolerancia
+    std_dev = np.std(offsets)
+    tolerancia = std_dev * tolerancia_factor  # Ajusta la tolerancia relativa a la dispersión de los datos
+
+    # Agrupar valores dentro de la tolerancia
+    rounded_offsets = [round(offset / tolerancia) * tolerancia for offset in offsets]
+
+    # Contar los valores agrupados
+    conteo = Counter(rounded_offsets)
+
+    # Obtener el valor más común
+    offset_yaw_line = conteo.most_common(1)[0][0]
+
+    return offset_yaw_line
 
 def correctHLine(folder_path, img_names, geonp_path, metadata_path, metadatanew_path, df, transformer, model, ancho, areaUmb, path_root, linesList):
        
@@ -1098,8 +1118,7 @@ def correctHLine(folder_path, img_names, geonp_path, metadata_path, metadatanew_
                 
                 
                     
-        conteo = Counter(offset_alturaLine)
-        offset_alturaLine = conteo.most_common(1)[0][0]
+        offset_alturaLine = encontrar_valor_mas_comun(offset_alturaLine)
         print(f"Offset Altura Linea: {offset_alturaLine}")
         
         for image_path in line:

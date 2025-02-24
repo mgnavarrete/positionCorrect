@@ -669,7 +669,28 @@ def correctYawLLK(folder_path, img_names, geonp_path, metadata_path, metadatanew
     print(f"Offset Yaw calculado para todas las imágenes de la carpeta {folder_path}")
     
     
+def encontrar_valor_mas_comun(offsets, tolerancia_factor=0.2):
+    if not offsets:
+        return None
     
+    # Convertir a numpy array
+    offsets = np.array(offsets)
+
+    # Calcular la desviación estándar para determinar la tolerancia
+    std_dev = np.std(offsets)
+    tolerancia = std_dev * tolerancia_factor  # Ajusta la tolerancia relativa a la dispersión de los datos
+
+    # Agrupar valores dentro de la tolerancia
+    rounded_offsets = [round(offset / tolerancia) * tolerancia for offset in offsets]
+
+    # Contar los valores agrupados
+    conteo = Counter(rounded_offsets)
+
+    # Obtener el valor más común
+    offset_yaw_line = conteo.most_common(1)[0][0]
+
+    return offset_yaw_line
+  
 def correctYawLine(folder_path, geonp_path, metadata_path, metadatanew_path, transformer, model, yawKML, ancho, list_images, areaUmb, difUmb, linesList):
 
 
@@ -843,12 +864,11 @@ def correctYawLine(folder_path, geonp_path, metadata_path, metadatanew_path, tra
                                     offsetsLine.append(offset_yaw2)
                                     
                                     
-           
+        
         #eliminar los 0 de la lista 
         offsetsLine = [offset for offset in offsetsLine if offset != 0]
         print(f"Offsets Linea: {offsetsLine}")
-        conteo = Counter(offsetsLine)
-        offset_yawLine = conteo.most_common(1)[0][0]
+        offset_yawLine = encontrar_valor_mas_comun(offsetsLine)
         print(f"Offset Yaw Linea: {offset_yawLine}")
         for image_path in line:
             save_metadata(metadata_path, image_path, offset_yawLine, metadatanew_path, "offset_yaw")
