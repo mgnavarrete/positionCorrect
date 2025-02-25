@@ -38,7 +38,10 @@ def save_georef_matriz(data, desp_este=0, desp_norte=0, desp_yaw=0, offset_altur
         img_width = int(data['ImageWidth'])
         tamano_pix = 0.000012
         dis_focal = 9 / 1000  # mavic 2 enterprice
-        yaw = np.pi * (float(data["GimbalYawDegree"]) + float(desp_yaw)) / 180
+        if data["GimbalYawDegree"] is not None:
+            yaw = np.pi * (float(data["GimbalYawDegree"]) + float(desp_yaw)) / 180
+        else:
+            yaw = 0
         center = get_image_pos_utm(data)
         if modo_altura == "relativo":
             #altura = float(data['RelativeAltitude']) - float(offset_altura)
@@ -58,7 +61,10 @@ def save_georef_matriz(data, desp_este=0, desp_norte=0, desp_yaw=0, offset_altur
         img_width = int(data['ImageWidth'])
         tamano_pix = 0.000012
         dis_focal = 9 / 1000  # mavic 2 enterprice
-        yaw = np.pi * (float(data["GimbalYawDegree"]) + float(desp_yaw)) / 180
+        if data["GimbalYawDegree"] is not None:
+            yaw = np.pi * (float(data["GimbalYawDegree"]) + float(desp_yaw)) / 180
+        else:
+            yaw = 0
         center = get_image_pos_utm(data)
         if modo_altura == "relativo":
             if float(data['RelativeAltitude']) < 3:
@@ -77,7 +83,10 @@ def save_georef_matriz(data, desp_este=0, desp_norte=0, desp_yaw=0, offset_altur
         img_width = int(data['ImageWidth'])
         tamano_pix = 0.000012
         dis_focal = 9 / 1000  # mavic 2 enterprice
-        yaw = np.pi * (float(data["GimbalYawDegree"]) + float(desp_yaw)) / 180
+        if data["GimbalYawDegree"] is not None:
+            yaw = np.pi * (float(data["GimbalYawDegree"]) + float(desp_yaw)) / 180
+        else:
+            yaw = 0
         center = get_image_pos_utm(data)
         if modo_altura == "relativo":
             altura = float(data['RelativeAltitude']) - float(offset_altura)
@@ -93,7 +102,10 @@ def save_georef_matriz(data, desp_este=0, desp_norte=0, desp_yaw=0, offset_altur
         tamano_pix = 0.000012
         dis_focal = float(data['FocalLength'][:-2]) / 1000
         # yaw = np.pi * (float(data["FlightYawDegree"]) + desp_yaw) / 180
-        yaw = np.pi * (float(data["GimbalYawDegree"]) + float(desp_yaw)) / 180
+        if data["GimbalYawDegree"] is not None:
+            yaw = np.pi * (float(data["GimbalYawDegree"]) + float(desp_yaw)) / 180
+        else:
+            yaw = 0
         pitch = np.pi * (float(data["GimbalPitchDegree"])) / 180.0
 
         try:
